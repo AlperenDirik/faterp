@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fate · Sanal Masa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="login">
+  <div class="lbox">
+    <div class="logo">+FATE</div>
+    <p>Sanal masaya hoş geldin</p>
+    <input id="l-name" placeholder="Kullanıcı adın" maxlength="24" autofocus>
+    <div class="roles">
+      <button class="role on" data-gm="0">⚔️ Oyuncu</button>
+      <button class="role" data-gm="1">👑 Game Master</button>
+    </div>
+    <button id="l-go" class="primary">Masaya Otur</button>
+  </div>
+</div>
+
+<header>
+  <div class="logo sm">+FATE</div>
+  <span id="who"></span>
+  <span class="grow"></span>
+  <button id="b-rules" class="ghost">📖 Kurallar</button>
+  <button id="b-clear" class="ghost gm-only">🧹 Sohbeti Temizle</button>
+  <button id="b-out" class="ghost">Çıkış</button>
+</header>
+
+<nav id="tabs">
+  <button data-tab="sheet">📜 Karakter</button>
+  <button data-tab="chat" class="on">🎲 Masa</button>
+  <button data-tab="table">👥 Sahne</button>
+</nav>
+
+<main>
+  <section class="panel" id="p-sheet"><div id="sheet"></div><div id="gmscreen"></div></section>
+
+  <section class="panel active" id="p-chat">
+    <div id="diffbar" hidden><span id="diff-t"></span><button id="diffx" class="mini gm-only">✕</button></div>
+    <div id="chat"></div>
+    <div id="roller">
+      <div class="r-row pl-only">
+        <div id="sel" class="chip">Sadece zar (+0)</div>
+        <button id="sel-x" class="mini" title="Seçimi kaldır">✕</button>
+        <span class="grow"></span>
+        <span class="fp">🪙 Fate: <b class="fate-n">0</b></span>
+      </div>
+      <div class="r-row gm-only">
+        <label>Kim <select id="g-actor"></select></label>
+        <label>Yetenek <select id="g-skill"></select></label>
+        <label>Seviye <span class="step"><button class="mini" data-gv="-1">−</button><b id="g-val">+0</b><button class="mini" data-gv="1">+</button></span></label>
+      </div>
+      <div class="r-row gm-only">
+        <span class="presets">Zorluk:
+          <button class="mini" data-d="0">Düz +0</button><button class="mini" data-d="2">İyi +2</button><button class="mini" data-d="4">Harika +4</button><button class="mini" data-d="6">Şahane +6</button><button class="mini" data-d="8">Efsane +8</button></span>
+        <label class="chk"><input type="checkbox" id="g-hid"> 🙈 Gizli zar</label>
+        <button id="g-bc" class="ghost">📢 Zorluğu duyur</button>
+      </div>
+      <div class="r-row">
+        <label>Bonus
+          <span class="step"><button class="mini" data-m="-1">−</button><b id="mod">0</b><button class="mini" data-m="1">+</button></span>
+        </label>
+        <label>Zorluk <input id="opp" type="number" min="-4" max="12" placeholder="–"></label>
+        <label class="chk pl-only"><input type="checkbox" id="asp"> Aspect (+2, 1 FP)</label>
+        <button id="roll" class="primary big">🎲 Zar At</button>
+      </div>
+    </div>
+    <form id="cform"><input id="cin" placeholder="Ne yapıyorsun? Önce anlat, sonra zar at…" autocomplete="off" maxlength="500"><button class="primary">Gönder</button></form>
+  </section>
+
+  <section class="panel" id="p-table">
+    <h3>Sahne Aspect'leri</h3>
+    <form id="sform">
+      <input id="s-text" placeholder="Yeni aspect (ör. Yanıyor, Karanlık)" maxlength="120">
+      <select id="s-kind"><option value="durum">Durum</option><option value="boost">Boost</option><option value="sahne">Sahne/Dünya</option></select>
+      <button class="primary">Ekle</button>
+    </form>
+    <div id="scene"></div>
+    <div class="pl-only"><h3>Masadakiler</h3>
+    <div id="players"></div></div>
+  </section>
+</main>
+
+<dialog id="rules">
+  <button class="mini close" onclick="this.closest('dialog').close()">✕</button>
+  <h2>Hızlı Kurallar</h2>
+  <p><b>Gayret</b> = 4dF + yetenek + aspect'ler + stunt bonusları. <b>Fark</b> = gayretin − zorluk.</p>
+  <table>
+    <tr><td>⬇ Başarısızlık</td><td>fark &lt; 0</td></tr>
+    <tr><td>⇄ Denklik</td><td>fark = 0</td></tr>
+    <tr><td>⬆ Başarılı</td><td>fark +1 / +2</td></tr>
+    <tr><td>⇈ Çok Başarılı</td><td>fark +3 veya fazlası</td></tr>
+  </table>
+  <p class="lad"><b>Merdiven:</b> +8 Efsane · +7 İnanılmaz · +6 Şahane · +5 Muhteşem · +4 Harika · +3 Baya iyi · +2 İyi · +1 Eh · 0 Düz · −1 Dandik · −2 Kötü · −3 Rezalet · −4 Felaket</p>
+  <h4>Hareketler</h4>
+  <ul>
+    <li><b>Üstesinden Gelme:</b> Engelleri temizle.</li>
+    <li><b>Avantaj Yaratma:</b> Yeni durum aspect'i yarat ya da var olandan faydalan (Başarılı: 1, Çok başarılı: 2 serbest kullanım).</li>
+    <li><b>Saldırı:</b> Fark kadar darbe (Çok başarılıda hasarı 1 azaltıp boost kazan).</li>
+    <li><b>Savunma:</b> Saldırıyı savuştur; Denklikte karşı hareket denk gelir.</li>
+  </ul>
+  <h4>Aspect, Stress, Consequence</h4>
+  <ul>
+    <li>Aspect kullanma: <b>+2</b>, tekrar zar at ya da zorluğu +2 yükselt. Bedel: 1 Fate puanı veya 1 serbest kullanım.</li>
+    <li>Stress: Her kutu 1 darbeyi karşılar. Consequence: Hafif 2, Orta 4, Ağır 6; saldırana 1 serbest aspect verir.</li>
+    <li>Bitmek: Tüm darbeyi dağıtamazsan bitersin. Bırakmak: Zardan önce söylenir, 1 Fate puanı kazandırır.</li>
+    <li>Toparlanma: Stress'ler sahne sonunda sıfırlanır. Hafif consequence 1 sahne, orta 1 oturum, ağır büyük ilerlemeye kadar.</li>
+  </ul>
+  <h4>Zorluk</h4>
+  <p>Düşük = karakterin yeteneği az · Orta = yeteneğe denk · Yüksek = çok fazla. Zorlu değilse Düz (+0), zorluysa İyi (+2).</p>
+  <h4>Takım Çalışması</h4>
+  <p>En yüksek skill'li zar atar; diğerleri hareketten vazgeçip +1 bonus verir (maks. bonus = takımdaki en yüksek skill). Yardım eden herkes aynı bedel ve consequence'la karşılaşır.</p>
+</dialog>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
